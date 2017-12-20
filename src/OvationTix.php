@@ -63,15 +63,15 @@ class OvationTix
     /**
      * Make request to API
      *
-     * Undocumented function long description
-     *
      * @param string $method
      * @param string $path
      * @return Psr\Http\Message\ResponseInterface
      **/
     private function request(string $method, string $path)
     {
+        // Clean up uri string
         $path = self::$apiRESTBase . '/' . ltrim($path, '/');
+
         return $this->httpClient->request($method, $path, [
             'headers' => [
                 // 'clientId'         => $this->clientId,
@@ -91,6 +91,12 @@ class OvationTix
     public function getSeries()
     {
         $response = $this->request(self::HTTP_GET, "/series/client({$this->clientId})");
-        return [];
+        $jsonObj = json_decode( (string) $response->getBody() );
+        if ( $jsonObj->clientActive ) {
+            return $jsonObj->seriesInformation;
+        } else {
+            throw new Error\InactiveOvationtixClient($this->clientId);
+        }
+        return false;
     }
 }
