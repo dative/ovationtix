@@ -1,0 +1,22 @@
+{
+    "name": "dative/ovationtix",
+    "description": "Provides easy-to-use interface to work with OvationTix API",
+    "license": "MIT",
+    "keywords": ["ovationtix"],
+    "authors": [
+        {
+            "name": "Rodrigo Passos",
+            "email": "rodrigo@hellodative.com"
+        }
+    ],
+    "type": "library",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Dative\\OvationTix\\": "src"
+        }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^6.5"
+    }
+}
