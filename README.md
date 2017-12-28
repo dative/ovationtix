@@ -84,3 +84,8 @@ Install dependencies as mentioned above (which will resolve [PHPUnit](http://pac
 ## Resources
 
 - [OvationTix REST API](https://api.ovationtix.com/public/)
+
+
+## Changelog
+### 1.0.0 - 2017.12.28
+* Initial release
