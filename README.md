@@ -72,14 +72,13 @@ Install dependencies as mentioned above (which will resolve [PHPUnit](http://pac
 
 ## Roadmap
 
-[x] Implement basic HTTP layer for requests
-[x] Implement basic [OvationTix](src/OvationTix.php) class
-[x] Implement [Production](src/Production.php) class
-[x] Implement [Performance](src/Performance.php) class
-[ ] add `getUpcommingPerformances` method to [OvationTix](src/OvationTix.php)
-    [ ] filter by `departmentId`
-[ ] add `getPerformancesCalendar` method to [OvationTix](src/OvationTix.php)
-[ ] Implement Venue class, update the Production class with it
+- [x] Implement basic HTTP layer for requests
+- [x] Implement basic [OvationTix](src/OvationTix.php) class
+- [x] Implement [Production](src/Production.php) class
+- [x] Implement [Performance](src/Performance.php) class
+- [ ] add `getUpcommingPerformances` method to [OvationTix](src/OvationTix.php)
+- [ ] add `getPerformancesCalendar` method to [OvationTix](src/OvationTix.php)
+- [ ] Implement Venue class, update the Production class with it
 
 
 ## Resources
