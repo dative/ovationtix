@@ -7,8 +7,6 @@
 
 namespace Dative\OvationTix;
 
-use GuzzleHttp\Client;
-
 /**
 * OvationTix is a helper class that facilitates access to the OvationTix API
 *
@@ -16,19 +14,12 @@ use GuzzleHttp\Client;
 */
 class OvationTix
 {
-    // @var string The base URL for the OvationTix REST API.
-    private static $apiRESTBase = "https://api.ovationtix.com/public/";
+    
     
     // @var int OvationTix client id
     public $clientId;
 
-    // @var GuzzleHttp\Client HTTP client for requests
-    private $httpClient;
-
     const VERSION = '1.0.0';
-
-    const HTTP_GET  = 'GET';
-    const HTTP_POST = 'POST';
 
     /**
      * Sets OvationTix client's id to be used for requests.
@@ -40,7 +31,7 @@ class OvationTix
     {
         if ($clientId) {
             $this->clientId = $clientId;
-            $this->httpClient = new \GuzzleHttp\Client();
+            $this->httpClient = new HttpClient();
         } else {
             $message = "clientId is required.";
             throw new Error\HTTPClient($message);
@@ -55,29 +46,8 @@ class OvationTix
     **/
     public function ping()
     {
-        $response = $this->request(self::HTTP_GET, '/');
+        $response = $this->httpClient->get('/');
         return $response->getStatusCode() === 200;
-    }
-
-    /**
-     * Make request to API
-     *
-     * @param string $method
-     * @param string $path
-     * @return Psr\Http\Message\ResponseInterface
-     **/
-    private function request(string $method, string $path)
-    {
-        // Clean up uri string
-        $path = self::$apiRESTBase . '/' . ltrim($path, '/');
-
-        return $this->httpClient->request($method, $path, [
-            'headers' => [
-                // 'clientId'         => $this->clientId,
-                'Content-Type'     => 'application/json'
-            ],
-            'allow_redirects' => false
-        ]);
     }
     
     /**
@@ -90,7 +60,7 @@ class OvationTix
     **/
     public function getSeries()
     {
-        $response = $this->request(self::HTTP_GET, "/series/client({$this->clientId})");
+        $response = $this->httpClient->get("/series/client({$this->clientId})");
         $jsonObj = json_decode( (string) $response->getBody() );
 
         if ( count($jsonObj->serviceMessages->errors) ) {
@@ -98,7 +68,11 @@ class OvationTix
         }
 
         if ( $jsonObj->clientActive ) {
-            return $jsonObj->seriesInformation;
+
+            return array_map(function ($production) {
+                return new Production($production);
+            }, $jsonObj->seriesInformation);
+
         } else {
             throw new Error\InactiveOvationtixClient($this->clientId);
         }
