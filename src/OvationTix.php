@@ -70,7 +70,6 @@ class OvationTix
     public function getSeriesProduction( int $productionId )
     {
         $production = $this->httpClient->fetchSeriesProduction( $productionId );
-
-        return new Production($production);
+        return new Production($production, $this->httpClient);
     }
 }

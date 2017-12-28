@@ -2,6 +2,9 @@
 
 namespace Dative\OvationTix;
 
+use Dative\OvationTix\Errors\HTTPClientProductionNotFound;
+use Dative\OvationTix\Errors\InactiveOvationtixClient;
+use Dative\OvationTix\Errors\ServiceMessage;
 use GuzzleHttp\Client;
 /**
  * HttpClient class
@@ -76,7 +79,7 @@ class HttpClient
      *
      * @param int $productionId
      * @return \stdClass
-     * @throws Error\HTTPClientProductionNotFound
+     * @throws HTTPClientProductionNotFound
      **/
     public function fetchSeriesProduction( int $productionId )
     {
@@ -86,7 +89,7 @@ class HttpClient
         );
 
         if ( count($response->seriesInformation) === 0 ) {
-            throw new Error\HTTPClientProductionNotFound($productionId);
+            throw new HTTPClientProductionNotFound($productionId);
         }
         return $response->seriesInformation[0];
     }
@@ -101,7 +104,7 @@ class HttpClient
     {
         $response = $this->request(
             self::HTTP_GET, 
-            "/series/client({$this->clientId})/production({$productionId})"
+            "/events/client({$this->clientId})/production({$productionId})"
         );
         return $response->performances;
     }
@@ -121,12 +124,12 @@ class HttpClient
      * Check if client is active
      *
      * @param bool $isActive
-     * @throws Error\InactiveOvationtixClient
+     * @throws InactiveOvationtixClient
      **/
     private function isClientActive( $isActive ) 
     {
         if ( ! $isActive ) {
-            throw new Error\InactiveOvationtixClient($this->clientId);
+            throw new InactiveOvationtixClient($this->clientId);
         }
     }
 
@@ -134,12 +137,12 @@ class HttpClient
      * Check for errors
      *
      * @param array $errors
-     * @throws Error\ServiceMessage
+     * @throws ServiceMessage
      **/
     private function checkErrors( array $errors ) 
     {
         if ( count($errors) ) {
-            throw new Error\ServiceMessage($errors);
+            throw new ServiceMessage($errors);
         }
     }
 }

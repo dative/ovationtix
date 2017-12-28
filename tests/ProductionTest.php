@@ -2,7 +2,7 @@
 
 use Dative\OvationTix\OvationTix;
 use Dative\OvationTix\Production;
-use Dative\OvationTix\Error\InvalidProductionObject;
+use Dative\OvationTix\Errors\InvalidProductionObject;
 use PHPUnit\Framework\TestCase;
 
 class OvationTixTest extends TestCase {

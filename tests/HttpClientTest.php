@@ -13,7 +13,7 @@ class HttpClientTest extends TestCase {
         $this->client = new HttpClient(284);
     }
 
-    public function testOvationTixGetSeries()
+    public function testOvationTixFetchSeries()
     {
         $series = $this->client->fetchSeries();
 
@@ -22,6 +22,12 @@ class HttpClientTest extends TestCase {
 
         // array has more tha 0 items in it?
         $this->assertTrue( count($series) > 0);
+    }
+
+    public function testOvationTixFetchSeriesProduction()
+    {
+        $production = $this->client->fetchSeriesProduction(955932);
+        $this->assertTrue( property_exists($production, 'productionId') );
     }
     
 }

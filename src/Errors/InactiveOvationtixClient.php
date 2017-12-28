@@ -1,6 +1,6 @@
 <?php
 
-namespace Dative\OvationTix\Error;
+namespace Dative\OvationTix\Errors;
 
 class InactiveOvationtixClient extends Base
 {    

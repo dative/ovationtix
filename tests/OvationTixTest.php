@@ -30,6 +30,16 @@ class OvationTixTest extends TestCase {
 
         // is it type of array?
         $this->assertTrue( is_a($production, 'Dative\OvationTix\Production') );
+
+        // get production performances
+        $performances = $production->getPerformances();
+
+        // has at least one performance
+        $this->assertTrue( count($performances) > 0 );
+        
+        // first performance is the correct Performance class
+        $this->assertTrue( is_a($performances[0], 'Dative\OvationTix\Performance') );
+
     }
     
 }

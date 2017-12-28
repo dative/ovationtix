@@ -2,6 +2,10 @@
 
 namespace Dative\OvationTix;
 
+use Dative\OvationTix\Errors\InvalidProductionObject;
+use Dative\OvationTix\Performance;
+use Dative\OvationTix\Traits\UseHttpClient;
+
 /**
 * Production (OvationTix Series)
 *
@@ -9,6 +13,8 @@ namespace Dative\OvationTix;
 */
 class Production
 {
+    use UseHttpClient;
+
     // @var int production id
     public $id;
 
@@ -75,9 +81,6 @@ class Production
     // @var bool
     public $showLinkToBuyTickets;
 
-    // @var GuzzleHttp\Client HTTP client for requests
-    private $httpClient;
-
 
     /**
      * @param stdClass $production
@@ -109,38 +112,20 @@ class Production
             $this->idIfOnlyOneEventAvailable = property_exists($production, 'performanceIdIfOnlyOneEventAvailable') ? $production->performanceIdIfOnlyOneEventAvailable : null;
             $this->showLinkToBuyTickets = property_exists($production, 'showLinkToBuyTickets') ? $production->showLinkToBuyTickets : false;
         } else {
-            throw new Error\InvalidProductionObject();
+            throw new InvalidProductionObject();
         }
 
         $this->httpClient = $httpClient ?: null;
     }
 
-    /**
-     * Set HttpClient
-     *
-     * @param Dative\OvationTix\HttpClient $httpClient
-     **/
-    public function setHttpClient(HttpClient $httpClient)
-    {
-        $this->httpClient = $httpClient;
-    }
-
-    private function hasHttpClient()
-    {
-        if (!$this->httpClient instanceof HttpClient) {
-            throw new Error\HTTPClient("Production Error: this production instance ({$this->id}) doesn't have httpClient set.");
-        }
-    }
-
     public function getPerformances()
     {
-        $this->hasHttpClient();
         $performances = $this->httpClient->fetchProductionPerformances( $this->id );
 
         if ( count($performances) ) {
-            return array_map(function ($production) {
-                return new Production($production, $this->httpClient);
-            }, $series);
+            return array_map(function ($performance) {
+                return new Performance($performance);
+            }, $performances);
         }
 
         return array();
