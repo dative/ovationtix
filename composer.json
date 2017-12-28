@@ -2,15 +2,19 @@
     "name": "dative/ovationtix",
     "description": "Provides easy-to-use interface to work with OvationTix API",
     "license": "MIT",
-    "keywords": ["ovationtix"],
+    "keywords": ["ovationtix", "ovation"],
+    "homepage": "https://github.com/dative/ovationtix",
+    "version": "1.0.1",
     "authors": [
         {
             "name": "Rodrigo Passos",
-            "email": "rodrigo@hellodative.com"
+            "email": "rodrigo@hellodative.com",
+            "homepage": "https://hellodative.com"
         }
     ],
     "type": "library",
     "require": {
+        "php" : "^7.0",
         "guzzlehttp/guzzle": "~6.3.0"
     },
     "autoload": {
