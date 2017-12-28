@@ -12,11 +12,6 @@ class OvationTixTest extends TestCase {
         // clientId 284 is the test client on the API docs.
         $this->otix = new OvationTix(284);
     }
-    
-    public function testOvationTixPingAPIEndPoint()
-    {
-        $this->assertTrue( $this->otix->httpClient->ping() );
-    }
 
     public function testOvationTixGetSeries()
     {
@@ -27,6 +22,14 @@ class OvationTixTest extends TestCase {
 
         // array has more tha 0 items in it?
         $this->assertTrue( count($series) > 0);
+    }
+
+    public function testOvationTixGetSeriesProduction()
+    {
+        $production = $this->otix->getSeriesProduction(955932);
+
+        // is it type of array?
+        $this->assertTrue( is_a($production, 'Dative\OvationTix\Production') );
     }
     
 }

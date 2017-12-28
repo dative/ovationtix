@@ -12,15 +12,10 @@ class HttpClientTest extends TestCase {
         // clientId 284 is the test client on the API docs.
         $this->client = new HttpClient(284);
     }
-    
-    public function testHttpClientPingAPIEndPoint()
-    {
-        $this->assertTrue( $this->client->ping() );
-    }
 
     public function testOvationTixGetSeries()
     {
-        $series = $this->client->getSeries();
+        $series = $this->client->fetchSeries();
 
         // is it type of array?
         $this->assertInternalType('array', $series);

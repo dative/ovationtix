@@ -50,7 +50,7 @@ class OvationTix
     **/
     public function getSeries()
     {
-        $series = $this->httpClient->getSeries();
+        $series = $this->httpClient->fetchSeries();
 
         if ( count($series) ) {
             return array_map(function ($production) {
@@ -59,5 +59,18 @@ class OvationTix
         }
 
         return array();
+    }
+
+    /**
+     * Get series production
+     *
+     * @param int $productionId
+     * @return OvationTix\Production
+     **/
+    public function getSeriesProduction( int $productionId )
+    {
+        $production = $this->httpClient->fetchSeriesProduction( $productionId );
+
+        return new Production($production);
     }
 }

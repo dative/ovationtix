@@ -81,6 +81,7 @@ class Production
 
     /**
      * @param stdClass $production
+     * @param Dative\OvationTix\HttpClient $httpClient
      **/
     public function __construct( $production, $httpClient = false )
     {
@@ -112,6 +113,37 @@ class Production
         }
 
         $this->httpClient = $httpClient ?: null;
-    }    
+    }
+
+    /**
+     * Set HttpClient
+     *
+     * @param Dative\OvationTix\HttpClient $httpClient
+     **/
+    public function setHttpClient(HttpClient $httpClient)
+    {
+        $this->httpClient = $httpClient;
+    }
+
+    private function hasHttpClient()
+    {
+        if (!$this->httpClient instanceof HttpClient) {
+            throw new Error\HTTPClient("Production Error: this production instance ({$this->id}) doesn't have httpClient set.");
+        }
+    }
+
+    public function getPerformances()
+    {
+        $this->hasHttpClient();
+        $performances = $this->httpClient->fetchProductionPerformances( $this->id );
+
+        if ( count($performances) ) {
+            return array_map(function ($production) {
+                return new Production($production, $this->httpClient);
+            }, $series);
+        }
+
+        return array();
+    }
 }
 

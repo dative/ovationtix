@@ -29,18 +29,6 @@ class HttpClient
     }
 
     /**
-    * Check if OvationTix REST API is online
-    *
-    * @return bool
-    * @throws conditon
-    **/
-    public function ping()
-    {
-        $response = $this->request(self::HTTP_GET, '/');
-        return $response->getStatusCode() === 200;
-    }
-
-    /**
      * Make request to API
      *
      * @param string $method
@@ -52,40 +40,106 @@ class HttpClient
         // Clean up uri string
         $path = self::$apiRESTBase . '/' . ltrim($path, '/');
 
-        return $this->client->request($method, $path, [
+        $response = $this->client->request($method, $path, [
             'headers' => [
                 // 'clientId'         => $this->clientId,
                 'Content-Type'     => 'application/json'
             ],
             'allow_redirects' => false
         ]);
+
+        $jsonObj = json_decode( (string) $response->getBody() );
+        
+        $this->validateRequest($jsonObj);
+
+        return $jsonObj;
     }
 
     /**
-    * Get series productions
+    * Fetch series productions
     *
     * Returns a array of objects
     *
     * @return array
-    * @throws Error\InactiveOvationtixClient
     **/
-    public function getSeries()
+    public function fetchSeries()
     {
-        $response = $this->request(self::HTTP_GET, "/series/client({$this->clientId})");
-        $jsonObj = json_decode( (string) $response->getBody() );
+        $response = $this->request(
+            self::HTTP_GET, 
+            "/series/client({$this->clientId})"
+        );
+        return $response->seriesInformation;
+    }
 
-        if ( count($jsonObj->serviceMessages->errors) ) {
-            throw new Error\ServiceMessage($message);
+    /**
+     * Fetch series production
+     *
+     * @param int $productionId
+     * @return \stdClass
+     * @throws Error\HTTPClientProductionNotFound
+     **/
+    public function fetchSeriesProduction( int $productionId )
+    {
+        $response = $this->request(
+            self::HTTP_GET, 
+            "/series/client({$this->clientId})/production({$productionId})"
+        );
+
+        if ( count($response->seriesInformation) === 0 ) {
+            throw new Error\HTTPClientProductionNotFound($productionId);
         }
+        return $response->seriesInformation[0];
+    }
 
-        if ( $jsonObj->clientActive ) {
+    /**
+     * Fetch series production
+     *
+     * @param int $productionId
+     * @return \stdClass
+     **/
+    public function fetchProductionPerformances( int $productionId )
+    {
+        $response = $this->request(
+            self::HTTP_GET, 
+            "/series/client({$this->clientId})/production({$productionId})"
+        );
+        return $response->performances;
+    }
 
-            return $jsonObj->seriesInformation;
+    /**
+     * Validate api request
+     *
+     * @param \stdClass $obj
+     **/
+    private function validateRequest( $obj ) 
+    {
+        $this->checkErrors($obj->serviceMessages->errors);
+        $this->isClientActive($obj->clientActive);
+    }
 
-        } else {
+    /**
+     * Check if client is active
+     *
+     * @param bool $isActive
+     * @throws Error\InactiveOvationtixClient
+     **/
+    private function isClientActive( $isActive ) 
+    {
+        if ( ! $isActive ) {
             throw new Error\InactiveOvationtixClient($this->clientId);
         }
-        
-        return false;
+    }
+
+    /**
+     * Check for errors
+     *
+     * @param array $errors
+     * @throws Error\ServiceMessage
+     **/
+    private function checkErrors( array $errors ) 
+    {
+        if ( count($errors) ) {
+            throw new Error\ServiceMessage($errors);
+        }
     }
 }
