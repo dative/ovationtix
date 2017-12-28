@@ -22,14 +22,28 @@ require_once('vendor/autoload.php');
 
 ## Getting Started
 
-Easy start here
+Create a instance by passing the OvationTix client id.
+
+```php
+$otix = new OvationTix(284);
+```
 
 ## Usage
 
-Simple usage looks like:
+### Get Series
+
+Will return array of **Productions**
 
 ```php
-echo $ovationtix;
+$series = $otix->getSeries();
+```
+
+### Get Production
+
+Will return a **Productions** object
+
+```php
+$production = $otix->getSeriesProduction( 1111 );
 ```
 
 ## Development
