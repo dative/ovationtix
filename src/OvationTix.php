@@ -34,8 +34,7 @@ class OvationTix
      * Sets OvationTix client's id to be used for requests.
      *
      * @param int $clientId Description
-     * @return type
-     * @throws conditon
+     * @throws Error\HTTPClient
      **/
     public function __construct(int $clientId = null)
     {
@@ -87,11 +86,17 @@ class OvationTix
     * Returns a array of productions
     *
     * @return array
+    * @throws Error\InactiveOvationtixClient
     **/
     public function getSeries()
     {
         $response = $this->request(self::HTTP_GET, "/series/client({$this->clientId})");
         $jsonObj = json_decode( (string) $response->getBody() );
+
+        if ( count($jsonObj->serviceMessages->errors) ) {
+            throw new Error\ServiceMessage($message);
+        }
+
         if ( $jsonObj->clientActive ) {
             return $jsonObj->seriesInformation;
         } else {
