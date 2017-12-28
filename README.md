@@ -40,10 +40,18 @@ $series = $otix->getSeries();
 
 ### Get Production
 
-Will return a **Productions** object
+Will return a [Production](src/Production.php) object.
 
 ```php
 $production = $otix->getSeriesProduction( 1111 );
+```
+
+### Get Production Performances
+
+Will return array of [Performances](src/Performance.php) from a [Production](src/Production.php).
+
+```php
+$performances = $production->getPerformances();
 ```
 
 ## Development
