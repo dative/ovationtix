@@ -9,6 +9,7 @@ class OvationTixTest extends TestCase {
     
     protected function setUp()
     {
+        // clientId 284 is the test client on the API docs.
         $this->otix = new OvationTix(284);
     }
     
@@ -19,7 +20,13 @@ class OvationTixTest extends TestCase {
 
     public function testOvationTixGetSeries()
     {
-        $this->assertInternalType('array', $this->otix->getSeries());
+        $series = $this->otix->getSeries();
+
+        // is it type of array?
+        $this->assertInternalType('array', $series);
+
+        // array has more tha 0 items in it?
+        $this->assertTrue( count($series) > 0);
     }
     
 }
