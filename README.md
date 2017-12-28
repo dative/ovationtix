@@ -32,7 +32,7 @@ $otix = new OvationTix(284);
 
 ### Get Series
 
-Will return array of [Productions](blob/master/src/Production.php).
+Will return array of [Productions](src/Production.php).
 
 ```php
 $series = $otix->getSeries();
