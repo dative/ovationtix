@@ -13,15 +13,31 @@ class HttpClient
     // @var string The base URL for the OvationTix REST API.
     private static $apiRESTBase = "https://api.ovationtix.com/public/";
 
+    // @var int OvationTix client id
+    private $clientId;
+
     const HTTP_GET  = 'GET';
     const HTTP_POST = 'POST';
 
     // @var GuzzleHttp\Client HTTP client for requests
     private $client;
 
-    public function __construct()
+    public function __construct( $clientId )
     {
+        $this->clientId = $clientId;
         $this->client = new \GuzzleHttp\Client();
+    }
+
+    /**
+    * Check if OvationTix REST API is online
+    *
+    * @return bool
+    * @throws conditon
+    **/
+    public function ping()
+    {
+        $response = $this->request(self::HTTP_GET, '/');
+        return $response->getStatusCode() === 200;
     }
 
     /**
@@ -46,16 +62,30 @@ class HttpClient
     }
 
     /**
-     * undocumented function summary
-     *
-     * Undocumented function long description
-     *
-     * @param Type $var Description
-     * @return type
-     * @throws conditon
-     **/
-    public function get( string $path )
+    * Get series productions
+    *
+    * Returns a array of objects
+    *
+    * @return array
+    * @throws Error\InactiveOvationtixClient
+    **/
+    public function getSeries()
     {
-        return $this->request(self::HTTP_GET, $path);
+        $response = $this->request(self::HTTP_GET, "/series/client({$this->clientId})");
+        $jsonObj = json_decode( (string) $response->getBody() );
+
+        if ( count($jsonObj->serviceMessages->errors) ) {
+            throw new Error\ServiceMessage($message);
+        }
+
+        if ( $jsonObj->clientActive ) {
+
+            return $jsonObj->seriesInformation;
+
+        } else {
+            throw new Error\InactiveOvationtixClient($this->clientId);
+        }
+        
+        return false;
     }
 }

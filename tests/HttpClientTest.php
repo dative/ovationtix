@@ -1,26 +1,26 @@
 <?php
 
-use Dative\OvationTix\OvationTix;
+use Dative\OvationTix\HttpClient;
 use PHPUnit\Framework\TestCase;
 
-class OvationTixTest extends TestCase {
+class HttpClientTest extends TestCase {
     
-    protected $otix;
+    protected $client;
     
     protected function setUp()
     {
         // clientId 284 is the test client on the API docs.
-        $this->otix = new OvationTix(284);
+        $this->client = new HttpClient(284);
     }
     
-    public function testOvationTixPingAPIEndPoint()
+    public function testHttpClientPingAPIEndPoint()
     {
-        $this->assertTrue( $this->otix->httpClient->ping() );
+        $this->assertTrue( $this->client->ping() );
     }
 
     public function testOvationTixGetSeries()
     {
-        $series = $this->otix->getSeries();
+        $series = $this->client->getSeries();
 
         // is it type of array?
         $this->assertInternalType('array', $series);

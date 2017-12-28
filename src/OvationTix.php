@@ -19,6 +19,9 @@ class OvationTix
     // @var int OvationTix client id
     public $clientId;
 
+    // @var HttpClient
+    public $httpClient;
+
     const VERSION = '1.0.0';
 
     /**
@@ -31,23 +34,11 @@ class OvationTix
     {
         if ($clientId) {
             $this->clientId = $clientId;
-            $this->httpClient = new HttpClient();
+            $this->httpClient = new HttpClient($clientId);
         } else {
             $message = "clientId is required.";
             throw new Error\HTTPClient($message);
         }
-    }
-
-    /**
-    * Check if OvationTix REST API is online
-    *
-    * @return bool
-    * @throws conditon
-    **/
-    public function ping()
-    {
-        $response = $this->httpClient->get('/');
-        return $response->getStatusCode() === 200;
     }
     
     /**
@@ -56,26 +47,17 @@ class OvationTix
     * Returns a array of productions
     *
     * @return array
-    * @throws Error\InactiveOvationtixClient
     **/
     public function getSeries()
     {
-        $response = $this->httpClient->get("/series/client({$this->clientId})");
-        $jsonObj = json_decode( (string) $response->getBody() );
+        $series = $this->httpClient->getSeries();
 
-        if ( count($jsonObj->serviceMessages->errors) ) {
-            throw new Error\ServiceMessage($message);
-        }
-
-        if ( $jsonObj->clientActive ) {
-
+        if ( count($series) ) {
             return array_map(function ($production) {
-                return new Production($production);
-            }, $jsonObj->seriesInformation);
-
-        } else {
-            throw new Error\InactiveOvationtixClient($this->clientId);
+                return new Production($production, $this->httpClient);
+            }, $series);
         }
-        return false;
+
+        return array();
     }
 }
